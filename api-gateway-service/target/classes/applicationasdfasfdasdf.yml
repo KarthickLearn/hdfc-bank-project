@@ -1,0 +1,55 @@
+server:
+       port : 9000
+       application:
+                   name : api-gateway
+
+
+
+
+logging:
+        level:
+              root : INFO
+
+
+              org:
+                  springframework:
+                                  cloud:
+                                        gateway:
+                                                 - route:
+                                                       RouteDefinitionLocator : INFO
+                                                 - TRACE
+
+#logging.level.org.springframework.cloud.gateway = TRACE
+spring:
+       main:
+            allow-bean-definition-overriding: true
+            web-application-type: reactive
+       cloud:
+         gateway:
+           routes:
+            - id: USER-SERVICE
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path= /api/user/**
+              filters:  SecurityConfig
+
+
+            - id: ACCOUNT-SUMMARY-SERVICE
+              uri: lb://ACCOUNT-SUMMARY-SERVICE
+              predicates:
+               - Path = /api/accountsummary/all
+              filters: SecurityConfig
+               # - RoleAuth = ADMIN
+
+
+
+            - id: USER-ACCOUNT-SUMMARY-SERVI/CE
+              uri: lb://USER-ACCOUNT-SUMMARY-SERVICE
+              predicates:
+               - Path = /api/accountsummary/user
+              filters: SecurityConfig
+
+
+
+#spring.cloud.gateway.routes[1].filters[1]=RoleAuth= ADMIN
+
